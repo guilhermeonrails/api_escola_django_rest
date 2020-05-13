@@ -38,3 +38,8 @@ class ListaAlunosMatriculadosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Matricula
         fields = ['aluno_nome']
+
+class DetalhesAlunoCursoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Matricula
+        fields = '__all__'

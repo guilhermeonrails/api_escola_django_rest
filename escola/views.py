@@ -1,6 +1,6 @@
 from rest_framework import viewsets, generics
 from escola.models import Aluno, Curso, Matricula
-from escola.serializer import AlunoSerializer, CursoSerializer, MatriculaSerializer, ListaAlunosMatriculadosSerializer, ListaMatriculasAlunoSerializer
+from escola.serializer import AlunoSerializer, CursoSerializer, MatriculaSerializer, ListaAlunosMatriculadosSerializer, ListaMatriculasAlunoSerializer, DetalhesAlunoCursoSerializer
 from rest_framework.views import APIView
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -20,12 +20,12 @@ class CursosViewSet(viewsets.ModelViewSet):
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated]
 
-class MatriculasViewSet(viewsets.ModelViewSet):
-    """Exibindo as Matrículas"""
-    queryset = Matricula.objects.all().select_related('alunos', 'cursos')
-    serializer_class = MatriculaSerializer
-    authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+# class MatriculasViewSet(viewsets.ModelViewSet):
+#     """Exibindo as Matrículas"""
+#     queryset = Matricula.objects.all().select_related('alunos', 'cursos')
+#     serializer_class = MatriculaSerializer
+#     authentication_classes = [BasicAuthentication]
+#     permission_classes = [IsAuthenticated]
 
 class ListaMatriculasAluno(generics.ListAPIView):
     """Exibindo todas as matrículas de um aluno"""
@@ -40,3 +40,14 @@ class ListaAlunosMatriculados(generics.ListAPIView):
         queryset = Matricula.objects.filter(cursos_id=self.kwargs["pk"])
         return queryset
     serializer_class = ListaAlunosMatriculadosSerializer
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+class DetalhesAlunoCurso(generics.ListAPIView, generics.UpdateAPIView):
+    """Exibindo detalhes de um aluno e um curso matriculado"""
+    def get_queryset(self):
+        queryset = Matricula.objects.filter(alunos_id=self.kwargs["aluno_id"], cursos_id=self.kwargs["curso_id"] )
+        return queryset
+    serializer_class = DetalhesAlunoCursoSerializer
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
